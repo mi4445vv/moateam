@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>모아팀 (MoaTeam) - 팀플 익명 의견함</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-light: #eef2ff;
+      --primary-dark: #3730a3;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --warning: #f59e0b;
+      --warning-light: #fffbeb;
+      --danger: #ef4444;
+      --danger-light: #fef2f2;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-400: #9ca3af;
+      --gray-600: #4b5563;
+      --gray-800: #1f2937;
+      --white: #ffffff;
+      --radius: 16px;
+      --shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", Roboto, "Noto Sans KR", sans-serif;
+    }
+
+    body {
+      background-color: var(--gray-100);
+      color: var(--gray-800);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    #app-container {
+      width: 100%;
+      max-width: 420px;
+      min-width: 320px;
+      background-color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      padding-bottom: 84px; /* 하단 테스트 바 여백 */
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    }
+
+    /* 상단 헤더 */
+    .app-header {
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--gray-200);
+      background-color: var(--white);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .app-title-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .app-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .header-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .date-badge {
+      background-color: var(--primary-light);
+      color: var(--primary);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 12px;
+      white-space: nowrap;
+    }
+
+    .history-btn {
+      background: none;
+      border: 1px solid var(--gray-200);
+      color: var(--gray-600);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* 뷰 섹션 */
+    .view-section {
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* 카드 */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 16px;
+      border: 1px solid var(--gray-200);
+      box-shadow: var(--shadow);
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gray-600);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* 폼 요소 */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .form-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gray-800);
+    }
+
+    .input-box {
+      width: 100%;
+      height: 46px;
+      padding: 0 14px;
+      border-radius: 12px;
+      border: 1px solid var(--gray-200);
+      font-size: 14px;
+      color: var(--gray-800);
+      background-color: var(--gray-50);
+      outline: none;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+
+    .input-box:focus {
+      border-color: var(--primary);
+      background-color: var(--white);
+    }
+
+    textarea.input-box {
+      height: 80px;
+      padding: 12px 14px;
+      resize: none;
+      line-height: 1.5;
+    }
+
+    /* 버튼 공통 */
+    .btn {
+      width: 100%;
+      height: 46px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background-color 0.15s, transform 0.05s;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background-color: var(--gray-100);
+      color: var(--gray-800);
+      border: 1px solid var(--gray-200);
+    }
+
+    .btn-outline {
+      background-color: var(--white);
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+    }
+
+    /* 인원수 빠른 선택 칩 */
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .chip-item {
+      padding: 7px 12px;
+      font-size: 12px;
+      border-radius: 18px;
+      border: 1px solid var(--gray-200);
+      background-color: var(--white);
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .chip-item.active {
+      background-color: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    /* 안건 공지 배너 */
+    .notice-card {
+      background: linear-gradient(135deg, #f5f7ff 0%, var(--primary-light) 100%);
+      border: 1px solid #c7d2fe;
+    }
+
+    .notice-subject {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin-bottom: 4px;
+      overflow-wrap: anywhere;
+    }
+
+    .notice-todo {
+      font-size: 13px;
+      color: var(--gray-600);
+      margin-bottom: 10px;
+      overflow-wrap: anywhere;
+    }
+
+    .notice-targets {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(79, 70, 229, 0.2);
+      font-size: 12px;
+      color: var(--gray-600);
+    }
+
+    .notice-targets strong {
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    /* 의견 리스트 */
+    .opinion-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .opinion-card {
+      background-color: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 12px 14px;
+      position: relative;
+    }
+
+    .opinion-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .opinion-author-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary);
+      background-color: var(--primary-light);
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .opinion-header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .opinion-time {
+      font-size: 10px;
+      color: var(--gray-400);
+    }
+
+    .opinion-del-btn {
+      background: none;
+      border: none;
+      color: var(--gray-400);
+      font-size: 14px;
+      cursor: pointer;
+      padding: 2px 4px;
+      line-height: 1;
+      border-radius: 4px;
+    }
+
+    .opinion-del-btn:hover {
+      color: var(--danger);
+      background-color: var(--danger-light);
+    }
+
+    .opinion-content {
+      font-size: 14px;
+      color: var(--gray-800);
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .empty-opinion {
+      text-align: center;
+      padding: 24px 10px;
+      color: var(--gray-400);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* 진행 바 컴포넌트 */
+    .metric-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .metric-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .metric-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-600);
+    }
+
+    .metric-bar-bg {
+      width: 100%;
+      height: 9px;
+      background-color: var(--gray-200);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .metric-bar-fill {
+      height: 100%;
+      background-color: var(--primary);
+      border-radius: 10px;
+      transition: width 0.3s ease, background-color 0.3s;
+    }
+
+    .metric-bar-fill.danger {
+      background-color: var(--danger);
+    }
+
+    .metric-warning-label {
+      font-size: 11px;
+      color: var(--danger);
+      font-weight: 700;
+      margin-top: 2px;
+      display: none;
+    }
+
+    /* 투표 카드 */
+    .vote-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px 14px;
+      background-color: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      transition: border-color 0.2s;
+    }
+
+    .vote-item.top-candidate {
+      border: 1.5px solid var(--primary);
+      background-color: #fbfbfe;
+    }
+
+    .vote-content-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .vote-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-800);
+      flex: 1;
+      overflow-wrap: anywhere;
+    }
+
+    .vote-score {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--primary);
+      white-space: nowrap;
+    }
+
+    .vote-action-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 6px;
+      border-top: 1px dashed var(--gray-200);
+    }
+
+    .btn-vote {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      background-color: var(--white);
+      border: 1px solid var(--primary);
+      color: var(--primary);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-vote:active {
+      background-color: var(--primary-light);
+    }
+
+    /* 재조율 알림 화면/팝업 */
+    .alert-box {
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: center;
+    }
+
+    .alert-box.danger {
+      background-color: var(--danger-light);
+      border: 1px solid #fecaca;
+      color: #b91c1c;
+    }
+
+    .alert-box.warning {
+      background-color: var(--warning-light);
+      border: 1px solid #fde68a;
+      color: #b45309;
+    }
+
+    .alert-box.success {
+      background-color: var(--success-light);
+      border: 1px solid #a7f3d0;
+      color: #047857;
+    }
+
+    .alert-title {
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .alert-desc {
+      font-size: 13px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    /* 하단 테스트 고정 바 (AGENTS.md 규칙 준수) */
+    #test-toolbar {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      max-width: 420px;
+      background-color: rgba(31, 41, 55, 0.96);
+      backdrop-filter: blur(8px);
+      padding: 10px 14px;
+      display: flex;
+      gap: 10px;
+      z-index: 100;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-test {
+      flex: 1;
+      height: 42px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: opacity 0.15s;
+    }
+
+    .btn-test-next {
+      background-color: var(--primary);
+      color: var(--white);
+    }
+
+    .btn-test-reset {
+      background-color: rgba(255, 255, 255, 0.14);
+      color: #f3f4f6;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-test:active {
+      opacity: 0.8;
+    }
+
+    /* 지난 회의 모달 */
+    #history-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 200;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 380px;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .modal-close-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: var(--gray-400);
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 14px 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* 지난 회의 결과 표시용 스타일 */
+    .history-card-result {
+      margin-top: 8px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background-color: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      font-size: 13px;
+    }
+
+    .history-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    .history-badge.badge-success {
+      background-color: var(--success-light);
+      color: #047857;
+    }
+
+    .history-badge.badge-warning {
+      background-color: var(--warning-light);
+      color: #b45309;
+    }
+
+    .history-badge.badge-gray {
+      background-color: var(--gray-200);
+      color: var(--gray-600);
+    }
+
+    .history-opinions-details {
+      margin-top: 8px;
+      font-size: 12px;
+    }
+
+    .history-opinions-details summary {
+      cursor: pointer;
+      color: var(--primary);
+      font-weight: 700;
+      outline: none;
+      padding: 2px 0;
+    }
+
+    .history-opinion-sub-item {
+      padding: 6px 8px;
+      background: white;
+      border-radius: 6px;
+      border: 1px solid var(--gray-200);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      overflow-wrap: anywhere;
+    }
+  </style>
+</head>
+<body>
+
+<div id="app-container">
+
+  <!-- 상단 공통 헤더 -->
+  <header class="app-header">
+    <div class="app-title-group">
+      <div class="app-title">
+        <span>💬</span> 모아팀
+      </div>
+    </div>
+    <div class="header-badges">
+      <span class="date-badge" id="app-day-badge">1일차 회의</span>
+      <button type="button" class="history-btn" id="btn-open-history">지난 회의</button>
+    </div>
+  </header>
+
+  <!-- 1. [화면 1] 입력 화면 (회의 만들기) -->
+  <section id="view-input" class="view-section">
+    <div class="card" style="text-align: center; padding: 22px 16px;">
+      <div style="font-size: 38px; margin-bottom: 8px;">🤝</div>
+      <h1 style="font-size: 20px; font-weight: 800; margin-bottom: 6px;">새 팀플 회의 만들기</h1>
+      <p style="font-size: 13px; color: var(--gray-600); line-height: 1.5;">
+        팀원들이 눈치 보지 않고<br>익명으로 의견을 편하게 모을 수 있어요.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="form-group">
+        <label class="form-label" for="input-member-count">팀 인원 수</label>
+        <input type="number" id="input-member-count" class="input-box" placeholder="인원 수 입력 (예: 4)" min="2" max="20" inputmode="numeric">
+        <div class="chip-group">
+          <button type="button" class="chip-item" onclick="setQuickMembers(3)">3명</button>
+          <button type="button" class="chip-item" onclick="setQuickMembers(4)">4명</button>
+          <button type="button" class="chip-item" onclick="setQuickMembers(5)">5명</button>
+          <button type="button" class="chip-item" onclick="setQuickMembers(6)">6명</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="input-todo">오늘 할 일</label>
+        <input type="text" id="input-todo" class="input-box" placeholder="예: 3주차 발표 자료 방향 정하기">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="input-subject">회의 안건 (주제)</label>
+        <input type="text" id="input-subject" class="input-box" placeholder="예: 타겟 사용자와 주요 콘셉트 결정">
+      </div>
+
+      <button type="button" id="btn-create-meeting" class="btn btn-primary" style="margin-top: 6px;">
+        회의 만들기
+      </button>
+    </div>
+  </section>
+
+  <!-- 2. [화면 2] 오늘의 회의 화면 (의견함) -->
+  <section id="view-meeting" class="view-section" style="display: none;">
+    <!-- 2) 초안 생성 배너 -->
+    <div class="card notice-card">
+      <div class="notice-subject" id="notice-subject-text">회의 주제</div>
+      <div class="notice-todo" id="notice-todo-text">오늘 할 일</div>
+      <div class="notice-targets">
+        <span>목표 의견: <strong id="target-opinion-count">0개</strong> (1인 2개 기준)</span>
+        <span>등록된 의견: <strong id="current-opinion-count">0개</strong></span>
+      </div>
+    </div>
+
+    <!-- 3) 실행 기록: 의견 입력 폼 -->
+    <div class="card">
+      <div class="card-title">✍️ 내 의견 남기기 (완전 익명)</div>
+
+      <div class="form-group">
+        <label class="form-label">작성자 선택 (참여율 집계용)</label>
+        <div class="chip-group" id="member-select-chips">
+          <!-- JS로 팀원 1 ~ N 칩 동적 생성 -->
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="input-opinion-text">아이디어 및 의견</label>
+        <textarea id="input-opinion-text" class="input-box" placeholder="자유롭게 생각을 적어주세요. 누가 썼는지는 철저히 가려집니다!"></textarea>
+      </div>
+
+      <button type="button" id="btn-add-opinion" class="btn btn-primary">
+        의견 넣기
+      </button>
+    </div>
+
+    <!-- 모인 의견 목록 -->
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <div class="card-title" style="margin-bottom: 0;">🗳️ 모인 익명 의견함</div>
+        <span style="font-size: 12px; color: var(--gray-400);" id="list-count-badge">0개</span>
+      </div>
+
+      <div id="opinion-list-container" class="opinion-list">
+        <div class="empty-opinion">
+          아직 등록된 의견이 없어요.<br>위에서 첫 번째 의견을 남겨보세요!
+        </div>
+      </div>
+    </div>
+
+    <!-- 하단 이동 버튼 -->
+    <button type="button" id="btn-go-status" class="btn btn-secondary">
+      📊 진행 현황 및 투표하러 가기
+    </button>
+  </section>
+
+  <!-- 3. [화면 3] 진행 현황 화면 (모니터링 & 투표) -->
+  <section id="view-status" class="view-section" style="display: none;">
+    <!-- 4) 모니터링 카드 -->
+    <div class="card">
+      <div class="card-title">📈 팀플 참여 현황</div>
+      
+      <div class="metric-group">
+        <!-- 팀원 참여율 -->
+        <div class="metric-row">
+          <div class="metric-info">
+            <span>팀원 참여율 (의견 등록)</span>
+            <span id="member-participation-label">0% (0명 / 0명)</span>
+          </div>
+          <div class="metric-bar-bg">
+            <div id="member-participation-bar" class="metric-bar-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- 의견 목표 달성률 -->
+        <div class="metric-row">
+          <div class="metric-info">
+            <span>목표 의견 달성률</span>
+            <span id="opinion-goal-label">0% (0개 / 0개)</span>
+          </div>
+          <div class="metric-bar-bg">
+            <div id="opinion-goal-bar" class="metric-bar-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- 투표율 (판단 규칙: 80% 미달 시 빨간색 강조) -->
+        <div class="metric-row">
+          <div class="metric-info">
+            <span>투표 참여율</span>
+            <span id="vote-participation-label">0% (0명 / 0명)</span>
+          </div>
+          <div class="metric-bar-bg">
+            <div id="vote-participation-bar" class="metric-bar-fill" style="width: 0%;"></div>
+          </div>
+          <div id="vote-warning-text" class="metric-warning-label">
+            ⚠️ 투표율이 80% 미만입니다. 더 많은 팀원의 투표가 필요합니다!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 투표하기 섹션 -->
+    <div class="card">
+      <div class="card-title">🗳️ 의견 투표하기 (1인 1표)</div>
+      
+      <div class="form-group">
+        <label class="form-label">투표할 팀원 선택</label>
+        <div class="chip-group" id="voter-select-chips">
+          <!-- JS로 투표자 칩 동적 생성 -->
+        </div>
+      </div>
+
+      <p style="font-size: 12px; color: var(--gray-600); margin-bottom: 10px;">
+        마음에 드는 의견의 <strong>[투표]</strong> 버튼을 눌러주세요.
+      </p>
+
+      <div id="vote-list-container" class="opinion-list">
+        <!-- JS로 투표 목록 생성 -->
+      </div>
+    </div>
+
+    <!-- 화면 제어 버튼 -->
+    <div style="display: flex; gap: 8px;">
+      <button type="button" id="btn-back-to-meeting" class="btn btn-secondary" style="flex: 1;">
+        🔙 회의로 돌아가기
+      </button>
+      <button type="button" id="btn-check-rebalance" class="btn btn-primary" style="flex: 1.2;">
+        🏁 회의 조율 완료 확인
+      </button>
+    </div>
+  </section>
+
+  <!-- 4. [화면 4] 재조율 알림 화면 -->
+  <section id="view-rebalance" class="view-section" style="display: none;">
+    <div id="rebalance-alert-container">
+      <!-- 동적으로 알림 박스 삽입 -->
+    </div>
+
+    <div class="card" id="rebalance-action-card">
+      <div class="card-title">다음 할 일</div>
+      <p id="rebalance-guide-text" style="font-size: 13px; color: var(--gray-600); line-height: 1.5; margin-bottom: 12px;">
+        안내된 내용을 확인하고 팀원들과 조율을 완료해 보세요.
+      </p>
+      <div id="rebalance-btn-container" style="display: flex; flex-direction: column; gap: 8px;">
+        <button type="button" id="btn-rebalance-confirm" class="btn btn-primary">
+          확인
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 테스트용 하단 바 (AGENTS.md 필수 조건: 다음 날로 이동, 처음부터 다시) -->
+  <footer id="test-toolbar">
+    <button type="button" id="btn-test-next-day" class="btn-test btn-test-next">
+      📅 다음 날로 이동
+    </button>
+    <button type="button" id="btn-test-reset" class="btn-test btn-test-reset">
+      🔄 처음부터 다시
+    </button>
+  </footer>
+
+  <!-- 지난 회의 보기 모달 -->
+  <div id="history-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">📜 지난 회의 기록</div>
+        <button type="button" class="modal-close-btn" id="btn-close-history">&times;</button>
+      </div>
+      <div class="modal-body" id="history-modal-body">
+        <!-- 지난 회의 목록 동적 렌더링 -->
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // localStorage 키 접두사 (AGENTS.md 규칙: 앱 이름 포함)
+  const STORAGE_KEY = 'moateam_state_v1';
+
+  // 상태 모델
+  const DEFAULT_STATE = {
+    currentDay: 1,
+    lastMemberCount: 4,
+    meeting: null, // { memberCount, todo, subject, targetOpinions, opinions: [], votes: {} }
+    pastMeetings: [] // 누적 저장용
+  };
+
+  let state = { ...DEFAULT_STATE };
+  let currentAuthorIndex = 1;
+  let currentVoterIndex = 1;
+
+  // 1. 상태 저장 및 불러오기
+  function loadState() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        state = Object.assign({}, DEFAULT_STATE, JSON.parse(saved));
+      }
+    } catch (e) {
+      console.error('데이터 로드 실패:', e);
+      state = { ...DEFAULT_STATE };
+    }
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {
+      console.error('데이터 저장 실패:', e);
+    }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>"']/g, function(m) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+    });
+  }
+
+  function setQuickMembers(count) {
+    document.getElementById('input-member-count').value = count;
+  }
+
+  // 화면 전환 관리
+  function switchView(viewId) {
+    const views = ['view-input', 'view-meeting', 'view-status', 'view-rebalance'];
+    views.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = (id === viewId) ? 'flex' : 'none';
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // 2. 렌더링 함수
+  function render() {
+    document.getElementById('app-day-badge').textContent = `${state.currentDay}일차 회의`;
+
+    // 회의가 없으면 1번 화면 표시
+    if (!state.meeting) {
+      const memberInput = document.getElementById('input-member-count');
+      if (!memberInput.value && state.lastMemberCount) {
+        memberInput.value = state.lastMemberCount;
+      }
+      switchView('view-input');
+      return;
+    }
+
+    // 회의가 있으면 상단 배너 정보 갱신
+    document.getElementById('notice-subject-text').textContent = state.meeting.subject;
+    document.getElementById('notice-todo-text').textContent = `📌 할 일: ${state.meeting.todo}`;
+    document.getElementById('target-opinion-count').textContent = `${state.meeting.targetOpinions}개`;
+    document.getElementById('current-opinion-count').textContent = `${state.meeting.opinions.length}개`;
+    document.getElementById('list-count-badge').textContent = `${state.meeting.opinions.length}개`;
+
+    // 작성자 칩 생성 (팀원 1 ~ N)
+    renderMemberChips();
+
+    // 의견 목록 렌더링
+    renderOpinionList();
+
+    // 진행 현황 렌더링
+    renderStatusMetrics();
+
+    // 투표자 칩 및 투표 목록 렌더링
+    renderVotingSection();
+  }
+
+  // 작성자 칩 렌더링
+  function renderMemberChips() {
+    const container = document.getElementById('member-select-chips');
+    container.innerHTML = '';
+    const count = state.meeting.memberCount;
+
+    for (let i = 1; i <= count; i++) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = `chip-item ${currentAuthorIndex === i ? 'active' : ''}`;
+      btn.textContent = `팀원 ${i}`;
+      btn.onclick = () => {
+        currentAuthorIndex = i;
+        renderMemberChips();
+      };
+      container.appendChild(btn);
+    }
+  }
+
+  // 모인 의견 목록 렌더링 (삭제 기능 포함)
+  function renderOpinionList() {
+    const container = document.getElementById('opinion-list-container');
+    const opinions = state.meeting.opinions;
+
+    if (opinions.length === 0) {
+      container.innerHTML = `
+        <div class="empty-opinion">
+          아직 등록된 의견이 없어요.<br>위에서 첫 번째 의견을 남겨보세요!
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = opinions.map((op, idx) => `
+      <div class="opinion-card">
+        <div class="opinion-header">
+          <span class="opinion-author-tag">익명의 의견 #${idx + 1}</span>
+          <div class="opinion-header-right">
+            <span class="opinion-time">${op.time}</span>
+            <button type="button" class="opinion-del-btn" onclick="deleteOpinion('${op.id}')" title="의견 삭제">✕</button>
+          </div>
+        </div>
+        <div class="opinion-content">${escapeHtml(op.text)}</div>
+      </div>
+    `).reverse().join('');
+  }
+
+  // 의견 삭제 함수 (정합성 유지: 투표 내역에서도 자동 제거)
+  window.deleteOpinion = function(opinionId) {
+    if (!confirm('이 의견을 삭제하시겠습니까?')) return;
+
+    state.meeting.opinions = state.meeting.opinions.filter(o => o.id !== opinionId);
+    
+    // 삭제된 의견에 투표했던 내역도 함께 정리
+    if (state.meeting.votes) {
+      for (const voter in state.meeting.votes) {
+        if (state.meeting.votes[voter] === opinionId) {
+          delete state.meeting.votes[voter];
+        }
+      }
+    }
+
+    saveState();
+    render();
+  };
+
+  // 모니터링 게이지 계산 및 렌더링
+  function renderStatusMetrics() {
+    const meeting = state.meeting;
+    const totalMembers = meeting.memberCount;
+
+    // 1) 팀원 참여율 (의견을 등록한 고유 팀원 수)
+    const authors = new Set(meeting.opinions.map(o => o.authorId));
+    const authorCount = authors.size;
+    const memberPartRate = totalMembers > 0 ? Math.round((authorCount / totalMembers) * 100) : 0;
+
+    document.getElementById('member-participation-label').textContent = `${memberPartRate}% (${authorCount}명 / ${totalMembers}명)`;
+    document.getElementById('member-participation-bar').style.width = `${Math.min(100, memberPartRate)}%`;
+
+    // 2) 목표 의견 달성률
+    const targetOpinions = meeting.targetOpinions;
+    const opCount = meeting.opinions.length;
+    const goalRate = targetOpinions > 0 ? Math.round((opCount / targetOpinions) * 100) : 0;
+
+    document.getElementById('opinion-goal-label').textContent = `${goalRate}% (${opCount}개 / ${targetOpinions}개)`;
+    document.getElementById('opinion-goal-bar').style.width = `${Math.min(100, goalRate)}%`;
+
+    // 3) 투표율 (판단 규칙: 80% 미달 시 빨간색 강조)
+    const votes = meeting.votes || {};
+    const voterCount = Object.keys(votes).length;
+    const voteRate = totalMembers > 0 ? Math.round((voterCount / totalMembers) * 100) : 0;
+
+    const voteBar = document.getElementById('vote-participation-bar');
+    const voteWarn = document.getElementById('vote-warning-text');
+    document.getElementById('vote-participation-label').textContent = `${voteRate}% (${voterCount}명 / ${totalMembers}명)`;
+    voteBar.style.width = `${Math.min(100, voteRate)}%`;
+
+    if (voteRate < 80) {
+      voteBar.classList.add('danger');
+      voteWarn.style.display = 'block';
+    } else {
+      voteBar.classList.remove('danger');
+      voteWarn.style.display = 'none';
+    }
+  }
+
+  // 투표 섹션 렌더링
+  function renderVotingSection() {
+    // 투표자 칩
+    const voterChips = document.getElementById('voter-select-chips');
+    voterChips.innerHTML = '';
+    const totalMembers = state.meeting.memberCount;
+
+    for (let i = 1; i <= totalMembers; i++) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      const hasVoted = state.meeting.votes && state.meeting.votes[i] !== undefined;
+      btn.className = `chip-item ${currentVoterIndex === i ? 'active' : ''}`;
+      btn.textContent = `팀원 ${i}${hasVoted ? ' (완료)' : ''}`;
+      btn.onclick = () => {
+        currentVoterIndex = i;
+        renderVotingSection();
+      };
+      voterChips.appendChild(btn);
+    }
+
+    // 각 의견별 득표수 계산
+    const voteCounts = {};
+    state.meeting.opinions.forEach(op => { voteCounts[op.id] = 0; });
+    const votes = state.meeting.votes || {};
+    Object.values(votes).forEach(opId => {
+      if (voteCounts[opId] !== undefined) voteCounts[opId]++;
+    });
+
+    // 최다 득표 수
+    const maxVotes = Math.max(0, ...Object.values(voteCounts));
+
+    const voteContainer = document.getElementById('vote-list-container');
+    if (state.meeting.opinions.length === 0) {
+      voteContainer.innerHTML = '<div class="empty-opinion">투표할 의견이 없습니다. 먼저 의견을 작성해 주세요.</div>';
+      return;
+    }
+
+    voteContainer.innerHTML = state.meeting.opinions.map(op => {
+      const score = voteCounts[op.id] || 0;
+      const isTop = (maxVotes > 0 && score === maxVotes);
+      const isMyPick = (votes[currentVoterIndex] === op.id);
+
+      return `
+        <div class="vote-item ${isTop ? 'top-candidate' : ''}">
+          <div class="vote-content-row">
+            <div class="vote-text">${escapeHtml(op.text)}</div>
+            <div class="vote-score">${score}표 ${isTop ? '👑' : ''}</div>
+          </div>
+          <div class="vote-action-row">
+            <span style="font-size: 11px; color: var(--gray-600);">
+              ${isMyPick ? '✔️ <strong>내가 선택한 의견</strong>' : ''}
+            </span>
+            <button type="button" class="btn-vote" onclick="castVote('${op.id}')">
+              ${isMyPick ? '투표 변경' : '이 의견에 투표'}
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // 1) 회의 만들기 (입력값 -> 초안 생성)
+  document.getElementById('btn-create-meeting').addEventListener('click', () => {
+    const memberCountInput = document.getElementById('input-member-count');
+    const todoInput = document.getElementById('input-todo');
+    const subjectInput = document.getElementById('input-subject');
+
+    const memberCount = parseInt(memberCountInput.value, 10);
+    const todo = todoInput.value.trim();
+    const subject = subjectInput.value.trim();
+
+    // 판단 규칙 검사
+    if (isNaN(memberCount) || memberCount < 2) {
+      alert('2명 이상의 인원 수와 주제를 입력해 주세요');
+      memberCountInput.focus();
+      return;
+    }
+
+    if (!todo || !subject) {
+      alert('오늘 할 일과 회의 주제를 입력해 주세요');
+      if (!todo) todoInput.focus();
+      else subjectInput.focus();
+      return;
+    }
+
+    // 초안 생성: 목표 의견 수 = 팀원 수 × 2
+    state.lastMemberCount = memberCount;
+    state.meeting = {
+      memberCount: memberCount,
+      todo: todo,
+      subject: subject,
+      targetOpinions: memberCount * 2,
+      opinions: [],
+      votes: {}
+    };
+
+    saveState();
+    render();
+    switchView('view-meeting');
+
+    // 입력 폼 초기화
+    todoInput.value = '';
+    subjectInput.value = '';
+  });
+
+  // 엔터키 지원 (입력 편의)
+  document.getElementById('input-subject').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') document.getElementById('btn-create-meeting').click();
+  });
+
+  // 2) 의견 넣기 (실행 기록)
+  document.getElementById('btn-add-opinion').addEventListener('click', () => {
+    const textInput = document.getElementById('input-opinion-text');
+    const text = textInput.value.trim();
+
+    if (!text) {
+      alert('의견을 입력해 주세요');
+      textInput.focus();
+      return;
+    }
+
+    const now = new Date();
+    const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+    const newOpinion = {
+      id: 'op_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+      authorId: currentAuthorIndex,
+      text: text,
+      time: timeStr
+    };
+
+    state.meeting.opinions.push(newOpinion);
+    saveState();
+    render();
+
+    textInput.value = '';
+    textInput.focus();
+  });
+
+  // 3) 투표하기
+  window.castVote = function(opinionId) {
+    if (!state.meeting.votes) state.meeting.votes = {};
+    state.meeting.votes[currentVoterIndex] = opinionId;
+    saveState();
+    render();
+  };
+
+  // 화면 이동 리스너
+  document.getElementById('btn-go-status').addEventListener('click', () => {
+    switchView('view-status');
+  });
+
+  document.getElementById('btn-back-to-meeting').addEventListener('click', () => {
+    switchView('view-meeting');
+  });
+
+  // 4) 재조율 조건 검사 및 4번 화면 알림 (판단 규칙 엄격 반영)
+  document.getElementById('btn-check-rebalance').addEventListener('click', () => {
+    const meeting = state.meeting;
+    const alertContainer = document.getElementById('rebalance-alert-container');
+    const guideText = document.getElementById('rebalance-guide-text');
+    const btnContainer = document.getElementById('rebalance-btn-container');
+
+    // [규칙 1]: 등록된 의견 수가 목표치(팀원수 * 2)에 미달하는 경우
+    if (meeting.opinions.length < meeting.targetOpinions) {
+      alertContainer.innerHTML = `
+        <div class="alert-box danger">
+          <div class="alert-title">⚠️ 의견이 부족합니다!</div>
+          <div class="alert-desc">
+            현재 <strong>${meeting.opinions.length}개</strong>의 의견이 모였습니다.<br>
+            목표 의견 수(<strong>${meeting.targetOpinions}개</strong>)를 채울 수 있도록 팀원들에게 추가 의견 작성을 독려해 주세요!
+          </div>
+        </div>
+      `;
+      guideText.textContent = '아래 확인을 누르면 의견을 더 남길 수 있는 회의 화면으로 이동합니다.';
+      btnContainer.innerHTML = `
+        <button type="button" class="btn btn-primary" onclick="switchView('view-meeting')">
+          ✍️ 추가 의견 작성하러 가기
+        </button>
+      `;
+      switchView('view-rebalance');
+      return;
+    }
+
+    // 득표수 집계
+    const voteCounts = {};
+    meeting.opinions.forEach(op => { voteCounts[op.id] = 0; });
+    const votes = meeting.votes || {};
+    Object.values(votes).forEach(opId => {
+      if (voteCounts[opId] !== undefined) voteCounts[opId]++;
+    });
+
+    const totalVoters = Object.keys(votes).length;
+    const voteRate = meeting.memberCount > 0 ? Math.round((totalVoters / meeting.memberCount) * 100) : 0;
+
+    // [규칙 2]: 투표율이 80% 미달인 경우 (설계서: "투표 안했어요")
+    if (voteRate < 80) {
+      alertContainer.innerHTML = `
+        <div class="alert-box warning">
+          <div class="alert-title">⚠️ 투표가 아직 부족합니다!</div>
+          <div class="alert-desc">
+            전체 팀원 중 <strong>${totalVoters}명(${voteRate}%)</strong>만 투표에 참여했습니다.<br>
+            원활한 결정을 위해 최소 80% 이상의 팀원이 투표할 수 있도록 독려해 주세요.
+          </div>
+        </div>
+      `;
+      guideText.textContent = '아래 확인을 누르면 투표 화면으로 이동하여 마저 투표할 수 있습니다.';
+      btnContainer.innerHTML = `
+        <button type="button" class="btn btn-primary" onclick="switchView('view-status')">
+          🗳️ 투표 계속하기
+        </button>
+      `;
+      switchView('view-rebalance');
+      return;
+    }
+
+    const maxVotes = Math.max(0, ...Object.values(voteCounts));
+    const topCandidates = meeting.opinions.filter(op => voteCounts[op.id] === maxVotes && maxVotes > 0);
+
+    // [규칙 3]: 1표 이상 득표 의견 중 최다 득표가 2개 이상 동률인 경우
+    if (topCandidates.length >= 2) {
+      alertContainer.innerHTML = `
+        <div class="alert-box warning">
+          <div class="alert-title">⚖️ 최다 득표 의견이 동률입니다!</div>
+          <div class="alert-desc">
+            <strong>${topCandidates.length}개</strong>의 의견이 나란히 <strong>${maxVotes}표</strong>로 동률입니다.<br>
+            팀원 간 의견 조율을 위해 동률 후보 간 재투표를 진행해 주세요.
+          </div>
+        </div>
+      `;
+      guideText.textContent = '아래 [재투표 시작하기]를 누르면 기존 투표가 초기화되어 동률 후보들에게 다시 투표할 수 있습니다.';
+      btnContainer.innerHTML = `
+        <button type="button" class="btn btn-primary" onclick="startReVote()">
+          🔄 동률 후보 간 재투표 시작하기
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="switchView('view-status')">
+          취소하고 돌아가기
+        </button>
+      `;
+      switchView('view-rebalance');
+      return;
+    }
+
+    // [규칙 4]: 정상적으로 1등 의견이 결정된 경우
+    if (topCandidates.length === 1) {
+      const winner = topCandidates[0];
+      alertContainer.innerHTML = `
+        <div class="alert-box success">
+          <div class="alert-title">🎉 최종 안건 결정 완료!</div>
+          <div class="alert-desc" style="margin-top: 6px;">
+            가장 많은 지지를 얻은 안건입니다:<br>
+            <strong style="font-size: 15px; color: #065f46; display: inline-block; margin-top: 8px;">
+              "${escapeHtml(winner.text)}" (${maxVotes}표)
+            </strong>
+          </div>
+        </div>
+      `;
+      guideText.textContent = '축하합니다! 팀플 회의 조율을 성공적으로 마쳤습니다. 다음 회의로 넘어가려면 하단의 [다음 날로 이동]을 눌러주세요.';
+      btnContainer.innerHTML = `
+        <button type="button" class="btn btn-primary" onclick="switchView('view-status')">
+          확인
+        </button>
+      `;
+      switchView('view-rebalance');
+      return;
+    }
+
+    // 예외 상황: 표가 전혀 없는 경우
+    alert('아직 투표한 팀원이 없습니다. 먼저 투표를 진행해 주세요.');
+  });
+
+  // 재투표 시작 (표 초기화 후 투표 화면으로)
+  window.startReVote = function() {
+    state.meeting.votes = {};
+    saveState();
+    render();
+    switchView('view-status');
+    alert('기존 투표가 초기화되었습니다. 동률 후보 의견에 다시 투표해 주세요!');
+  };
+
+  // 5) [다음 날로 이동] (AGENTS.md 필수 테스트 버튼)
+  document.getElementById('btn-test-next-day').addEventListener('click', () => {
+    if (state.meeting) {
+      if (!confirm('현재 회의를 "지난 회의"로 저장하고, 다음 날 새 회의를 시작할까요?')) {
+        return;
+      }
+
+      // 회의 결과 집계
+      const voteCounts = {};
+      state.meeting.opinions.forEach(op => { voteCounts[op.id] = 0; });
+      const votes = state.meeting.votes || {};
+      Object.values(votes).forEach(opId => {
+        if (voteCounts[opId] !== undefined) voteCounts[opId]++;
+      });
+
+      const maxVotes = Math.max(0, ...Object.values(voteCounts));
+      const topOpinions = state.meeting.opinions.filter(op => voteCounts[op.id] === maxVotes && maxVotes > 0);
+
+      let resultStatus = '미완료';
+      let resultText = '투표가 완료되지 않았습니다.';
+      let resultBadgeClass = 'badge-gray';
+
+      if (topOpinions.length === 1) {
+        resultStatus = '결정 완료';
+        resultText = topOpinions[0].text;
+        resultBadgeClass = 'badge-success';
+      } else if (topOpinions.length >= 2) {
+        resultStatus = '동률 조율 필요';
+        resultText = `${topOpinions.length}개 의견 동률 (${maxVotes}표)`;
+        resultBadgeClass = 'badge-warning';
+      }
+
+      const opinionDetails = state.meeting.opinions.map(op => ({
+        text: op.text,
+        votes: voteCounts[op.id] || 0
+      }));
+
+      // 현재 회의 보관 (결과 포함)
+      state.pastMeetings.push({
+        day: state.currentDay,
+        date: new Date().toLocaleDateString('ko-KR'),
+        subject: state.meeting.subject,
+        todo: state.meeting.todo,
+        opinionCount: state.meeting.opinions.length,
+        resultStatus: resultStatus,
+        resultText: resultText,
+        maxVotes: maxVotes,
+        resultBadgeClass: resultBadgeClass,
+        opinions: opinionDetails
+      });
+    }
+
+    state.currentDay += 1;
+    state.meeting = null; // 새 회의 개설 준비
+    saveState();
+    render();
+    alert(`${state.currentDay}일차로 이동했습니다! 새로운 회의 안건을 개설해 보세요.`);
+  });
+
+  // 6) [처음부터 다시] (AGENTS.md 필수 테스트 버튼)
+  document.getElementById('btn-test-reset').addEventListener('click', () => {
+    if (confirm('정말 처음부터 다시 시작할까요?\n모든 회의 기록과 데이터가 초기화됩니다.')) {
+      localStorage.removeItem(STORAGE_KEY);
+      state = { ...DEFAULT_STATE };
+      saveState();
+      render();
+      alert('초기화되었습니다.');
+    }
+  });
+
+  // 지난 회의 보기 모달 (결과 및 전체 의견 열람 지원)
+  document.getElementById('btn-open-history').addEventListener('click', () => {
+    const modal = document.getElementById('history-modal');
+    const body = document.getElementById('history-modal-body');
+
+    if (state.pastMeetings.length === 0) {
+      body.innerHTML = '<div class="empty-opinion">아직 보관된 지난 회의가 없습니다.<br>[다음 날로 이동] 시 자동으로 보관됩니다.</div>';
+    } else {
+      body.innerHTML = state.pastMeetings.map((m, idx) => `
+        <div class="card" style="padding: 14px;">
+          <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--primary); font-weight: 700; margin-bottom: 4px;">
+            <span>${m.day}일차 회의</span>
+            <span>${m.date}</span>
+          </div>
+          <div style="font-weight: 800; font-size: 15px; margin-bottom: 4px; overflow-wrap: anywhere;">${escapeHtml(m.subject)}</div>
+          <div style="font-size: 12px; color: var(--gray-600); margin-bottom: 6px; overflow-wrap: anywhere;">📌 할 일: ${escapeHtml(m.todo)}</div>
+
+          <!-- 회의 결과 영역 -->
+          <div class="history-card-result">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <span style="font-size: 11px; font-weight: 700; color: var(--gray-600);">회의 결정 결과</span>
+              <span class="history-badge ${m.resultBadgeClass || 'badge-gray'}">${escapeHtml(m.resultStatus || '완료')}</span>
+            </div>
+            <div style="font-weight: 700; font-size: 13px; color: var(--gray-800); overflow-wrap: anywhere; line-height: 1.4;">
+              ${m.resultStatus === '결정 완료' ? '🏆 ' : ''}${escapeHtml(m.resultText || '기록 없음')} ${m.resultStatus === '결정 완료' ? `(${m.maxVotes}표)` : ''}
+            </div>
+
+            <!-- 모인 의견 전체 보기 아코디언 -->
+            ${m.opinions && m.opinions.length > 0 ? `
+              <details class="history-opinions-details">
+                <summary>모인 의견 및 득표수 보기 (${m.opinions.length}개)</summary>
+                <div style="margin-top: 6px; display: flex; flex-direction: column; gap: 4px;">
+                  ${m.opinions.map((op, opIdx) => `
+                    <div class="history-opinion-sub-item">
+                      <span>${opIdx + 1}. ${escapeHtml(op.text)}</span>
+                      <span style="font-weight: 700; color: var(--primary); font-size: 11px; white-space: nowrap;">${op.votes || 0}표</span>
+                    </div>
+                  `).join('')}
+                </div>
+              </details>
+            ` : ''}
+          </div>
+        </div>
+      `).reverse().join('');
+    }
+
+    modal.style.display = 'flex';
+  });
+
+  document.getElementById('btn-close-history').addEventListener('click', () => {
+    document.getElementById('history-modal').style.display = 'none';
+  });
+
+  // 모달 배경 클릭 시 닫기
+  document.getElementById('history-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'history-modal') {
+      document.getElementById('history-modal').style.display = 'none';
+    }
+  });
+
+  // 초기화 및 이벤트 등록
+  document.addEventListener('DOMContentLoaded', () => {
+    loadState();
+    render();
+  });
+</script>
+
+</body>
+</html>
